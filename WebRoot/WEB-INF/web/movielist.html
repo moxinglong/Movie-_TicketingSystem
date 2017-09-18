@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>电影管理</title>
+	<link rel="icon" href="${ctxPath}/include/images/ico.png" type="image/x-icon"/>
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/icon.css">
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/easyui-lang-zh_CN.js"></script>
+  </head>
+  
+  <body>
+    <table id="dg" cellpadding="2" ></table>
+	<div id="tb" style="padding:5px;">
+	   <input id="s_name" class="easyui-textbox"  data-options="prompt:'电影名字...'" style="width:200;height:32">
+	   <a id="s_movie" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+	   <a id="a_movie" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">添加</a>
+	 
+	</div>
+  </body>
+  	<script type="text/javascript">
+		var s_name="",name="";
+		function loadGrid(){
+		      s_name=$("#s_name").val();
+		      $("#dg").datagrid({
+		            width:1150,height:510,nowrap:false,
+		            striped:true,border:true,collapsible:false,
+		            url:"${ctxPath}/movie/listMovie",                    
+		     		queryParams:{"s_name":s_name},
+		            pagination:true,
+		            rownumbers:true,
+		            fitColumns:true,pageSize:20,
+		            loadMsg:'数据加载中...' ,
+		            columns:[[
+		                  {title:'电影名字', field:'name',width:100},
+		                  {title:'放映时长(分钟)', field:'time',width:100},
+		                  {title:'电影类型', field:'typ',width:100},
+		                  {title:'放映场次(场)', field:'degr',width:100},
+		                  {title:'电影描述', field:'des',width:150},
+		                  {title:'评分(分)', field:'grad',width:100},
+		                  {title:'票(元)', field:'pric',width:100},
+		                  {title:'操作', field:'pic',width:100, formatter: function(value,row,index){
+		                      var p="<a href=\"javascript:editMovie('"+row.name+"')\">修改</a>";
+		                      p+="    |   <a href=\"javascript:delMovie('"+row.name+"')\">删除</a>";
+		                      return p;
+		                   }}
+		                ]],
+		              toolbar:'#tb'
+		      });
+		}
+		function editMovie(name){
+		      parent.swNewTab("修改电影信息","${ctxPath}/movie/goEdit?name="+name);
+		}
+		function delMovie(ph){
+		      name = ph;
+		      parent.dlg_h(400,140,"确认删除？","您确认要删除“"+name+"”吗？",dlg_ok,null,"question");
+		}
+		function dlg_ok(){
+		      $.ajax({
+		            url:"${ctxPath}/movie/doDel1?name="+name,
+		            type:"post",
+		            success: function(res){
+		                  if(res=="true"){
+		                        parent.dlg_h(400,140,"删除成功","您已删除电影："+name,null,null,"info");
+		                        id="";s_name="";
+		                        loadGrid();
+		                  }else {
+		                        parent.dlg_h(300,140,"删除失败",res,null,null,"error");
+		                  }
+		                  return false;
+		            },
+		            error:function(res){
+		                  parent.dlg_h(300,140,"系统提示","系统错误",null,null,"error");
+		            }
+		      })
+		}
+		$(function(){
+		      loadGrid();
+		      $("#s_movie").click(function(){
+		            s_name=$("#s_name").val();
+		            loadGrid();
+		      });
+		      $("#a_movie").click(function(){
+		            parent.swNewTab("添加电影信息","${ctxPath}/movie/goAdd");
+		      });
+		      $("#tb").bind("keydown",function(e){           
+		            var theEvent = e || window.event; // 兼容FF和IE和Opera  
+		            var code = theEvent.keyCode || theEvent.which || theEvent.charCode;   
+		            if (code == 13) {//回车执行查询
+		            $("#s_movie").click();
+		        }   
+		      });
+		})
+	</script>
+</html>

@@ -1,0 +1,227 @@
+*{
+	margin: 0px;
+	padding: 0px;
+}
+body{
+    font: 12px Arial,Helvetica,sans-serif,"宋体";
+    width: 100%;
+    color: #333;
+    display: block;
+}
+a{
+    text-decoration: none;
+    color: #333;
+}
+a:hover{
+	color: #a10000;
+}
+#wrapper{
+    margin: 0 auto;
+    width: 980px;
+}
+#header{
+	width: 100%;
+	height: 54px;
+    border-bottom: 1px solid #7A7F89;
+}
+.logo{
+    float: left;
+    height: 39px;
+    width: 311px;
+    text-decoration: none;
+    margin-top: 15px;
+}
+.help-center,.account{
+    float: right;
+    line-height: 39px;
+    margin-top: 15px;
+}
+.account{ 
+    margin-right: 40px;
+    color: #666;
+}
+.logout{
+    color: #a10000;
+    padding: 0px 5px;
+    text-decoration: none;
+}
+#location{
+    background: url(../img/image-shopping/newProm.gif);
+    height: 28px;
+    width: 540px; 
+    margin-top: 10px;
+}
+#location .em{
+    color: #fff;
+}
+#location span{
+    color: #666;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 28px;
+    text-align: center;
+    width: 170px;
+}
+#content{
+	height: 373px;
+    margin-top: 10px;
+}
+.cart-top{
+	width: 935px;
+	height: 30px;
+    overflow: hidden;
+    padding-left: 45px;
+    background: url(../img/image-shopping/newpromotion.gif) no-repeat -460px 0px;
+}
+.cart-top h2{
+	line-height: 38px;
+	font-size: 18px;
+	font-family: "微软雅黑";
+}
+.tip{
+    margin-top: 6px;
+    color: #656565;
+    line-height: 20px;
+}
+.tip span{
+    color: #a10000;
+}
+#cart-product{
+	width: 980px;
+	height: 277px;
+    margin-top: 10px;
+}
+table{
+    width: 980px;
+    border: 1px solid #DCDFE4;
+    text-align: center;
+}
+thead{
+	width: 980px;
+	height: 37px;
+	border-bottom: 1px solid #B7B7B7;
+	background-image: linear-gradient(to top,#d1d1d1 50%,#f1f1f1 100%);
+}
+.bar-title .all-products-ckb{
+	margin-right: 10px;
+    width: 13px;
+    height: 13px;
+}
+.bar-title{
+    width: 80px;
+}
+.image{
+    width: 100px;
+}
+.name{
+	width: 342px;
+	text-align: center;
+}
+.size{
+	width: 80px;
+}
+.price{
+	width: 80px;
+}
+.qty{
+	width: 100px;
+}
+.discount{
+	width: 46px;
+}
+.subtotal{
+	width: 92px;
+}
+.operate{
+	width: 80px;
+}
+tbody{
+    display: table-row-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+#supplier-general-product_tb{
+	widows: 100%;
+	height: 91px;
+}
+table td img{
+    height: 80px;
+    width: 80px;
+    background-color:red;
+    border: 1px solid #C8C8C8;
+}
+#cart-product td.name{
+    text-align: left;
+    padding-left: 10px;
+    color: #333333;
+}
+.modify-product-qty{
+	width: 30px;
+	height: 20px;
+	text-align: center;
+}
+.operate a{
+	color: #999999;
+}
+.operate a:hover{
+	color: #a10000;
+}
+#bar-summary{
+	width: 978px;
+	height: 116px;
+    border: 1px solid #EBE5BB;
+    margin-top: 10px;
+}
+.bar{
+    width: auto;
+    padding: 14px 42px 0px 13px;
+}
+.all-products-ckb{
+    margin-right: 10px;
+}
+.batch-del-cart{
+    margin-left: 20px;
+}
+.bar span{
+    padding-left: 42px;
+}
+.bar span strong{
+    color: #a10000;
+}
+.summary{
+    float: left;
+    padding: 10px 10px 10px 13px;
+}
+.summary .amount{
+    font-size: 24px;
+    color: #a10000;
+}
+.btn-panel{
+    float: right;
+    cursor: pointer;
+    margin-top: 15px;
+}
+.go-buy{
+	display: inline-block;
+    width: 122px;
+    height: 37px;
+    line-height: 37px;
+    margin: 0px 10px;
+    color: red;
+    font-size: 22px;
+    text-align: center;
+    background: url(../img/image-register/bt2_bg.jpg) no-repeat 0px 0px;
+    overflow: hidden;
+}
+.checkout{
+    display: inline-block;
+    width: 122px;
+    height: 37px;
+    line-height: 37px;
+    margin: 0px 10px;
+    padding-left: 10px;
+    color: black;
+    font-size: 22px;
+    background: url(../img/image-register/bt_bg.jpg) no-repeat 0px 0px;
+    overflow: hidden;
+}

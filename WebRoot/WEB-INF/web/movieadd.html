@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>添加电影</title>
+	<link rel="icon" href="${ctxPath}/include/images/ico.png" type="image/x-icon"/>
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/icon.css">
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/tabpage.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/xheditor/xheditor-1.2.2.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/xheditor/xheditor_lang/zh-cn.js"></script>
+  </head>
+  
+  	<body>
+    	<div style="margin:20px 0;"></div>
+	   <div class="easyui-panel" style="width:900px;padding:60px 60px;">
+	   <form id="addnews_form" method="post">
+	      <div style="margin-bottom:20px">
+	      	电影名字：&nbsp;&nbsp;&nbsp;<input id="name" name="name" class="easyui-textbox" data-options="required:true" style="width:87%;height:32px"/>
+	      </div>
+	      <div style="margin-bottom:20px">
+	                    放映时长：&nbsp;&nbsp;&nbsp;<input id="time" name="time" class="easyui-numberbox" data-options="min:60,max:200,required:true" style="width:87%;height:32px">
+	      </div>
+	      <div style="margin-bottom:20px">
+	      	<div style="height: 50px;">可选类型(最多选择三种类型):
+	      		<input type="checkbox" id="allType" name="allType" value="爱情" style="width: 18px;height: 18px;" onclick="check()"/>爱情
+	      		<input type="checkbox" id="allType" name="allType" value="动画" style="width: 18px;height: 18px;margin-left: 10px;" onclick="check()"/>动画
+	      		<input type="checkbox" id="allType" name="allType" value="奇幻" style="width: 18px;height: 18px;margin-left: 10px;" onclick="check()"/>奇幻
+	      		<input type="checkbox" id="allType" name="allType" value="剧情" style="width: 18px;height: 18px;margin-left: 10px;" onclick="check()"/>剧情
+	      		<input type="checkbox" id="allType" name="allType" value="冒险" style="width: 18px;height: 18px;margin-left: 10px;" onclick="check()"/>冒险
+	      		<input type="checkbox" id="allType" name="allType" value="动作" style="width: 18px;height: 18px;margin-left: 10px;" onclick="check()"/>动作
+	      		<input type="checkbox" id="allType" name="allType" value="悬疑" style="width: 18px;height: 18px;margin-left: 10px;" onclick="check()"/>悬疑
+	      		<input type="checkbox" id="allType" name="allType" value="历史" style="width: 18px;height: 18px;margin-left: 10px;" onclick="check()"/>历史
+	      		<input type="checkbox" id="allType" name="allType" value="3D"  style="width: 18px;height: 18px;margin-left: 10px;" onclick="check()"/>3D
+	      	</div>       
+	      </div>
+	      <div style="margin-bottom:20px">
+	      		<!-- 用来记录电影类型 通过 “,” 连接-->
+	      		电影类型：&nbsp;&nbsp;&nbsp;<input type="text" id="typ" name="typ" class="easyui-textbox" readonly="readonly" style="margin-left:20px;width:87%;height:32px;"/>
+	      </div>
+	      <div style="margin-bottom:20px">
+	      	放映场次：&nbsp;&nbsp;&nbsp;<input id="degr" name="degr" class="easyui-numberbox" data-options="min:0,max:200,required:true" style="width:87%;height:32px"/>
+	      </div>
+	      <div style="margin-bottom:20px">
+	      	电影描述：&nbsp;&nbsp;&nbsp;<input id="des" name="des" class="easyui-textbox" data-options="required:true" style="width:87%;height:32px"/>
+	      </div>
+	      <div style="margin-bottom:20px">
+	      	评&nbsp;&nbsp;分：&nbsp;&nbsp;&nbsp;<input id="grad" name="grad" class="easyui-numberbox" data-options="min:0,precision:1,max:10,required:true" style="width:87%;height:32px"/>
+	      </div>
+	      <div style="margin-bottom:20px">
+	      	价&nbsp;&nbsp;格：&nbsp;&nbsp;&nbsp;<input id="pric" name="pric" class="easyui-numberbox" data-options="min:0,precision:1,max:500,required:true" style="width:87%;height:32px"/>
+	      </div>
+	      <div style="margin-bottom:20px">
+	        <div>电影封面:</div>
+	      </div>
+	      <div style="margin-bottom:20px">
+	        <textarea id="pic" name="pic" rows="12" cols="80" style="width: 99%;background:url(${ctxPath}/include/xheditor/demobg.jpg) no-repeat right bottom fixed"></textarea>
+	      </div>
+	      <input id="checkName" name="checkName" type="hidden"/>
+	      </form>
+	      <div style="text-align:center;">
+	                  <a id="savenews" href="#" class="easyui-linkbutton" iconCls="icon-ok" style="width:132px;height:32px">保存</a>
+	                  <a id="back" href="#" class="easyui-linkbutton" iconCls="icon-back" style="width:132px;height:32px">返回</a>
+	      </div>
+	   </div>
+	  </body>
+  		<script>
+	   //设置了全局变量，用于xheditor
+		var xhebase="${ctxPath}/",uploadurl="${ctxPath}/file/upload";
+		var uid;
+		var name;
+		var opened_node=null;
+			
+		$(function(){
+		      $('#pic').xheditor({//新闻内容采用xheditor编辑
+		        internalScript:true,
+		        upLinkUrl:uploadurl,upLinkExt:"zip,rar,txt",
+		        upImgUrl:uploadurl,upImgExt:"jpg,jpeg,gif,png",
+		        upFlashUrl:uploadurl,upFlashExt:"swf",
+		        upMediaUrl:uploadurl,upMediaExt:"wmv,avi,mp4,wma,mp3,mid"
+		      });
+		      $('#savenews').click(function(){//发布新闻前，要校验
+		      		if($("#name").val().length<=0){alert("必须填写电影名字");return;}
+		            if($("#time").val().length<=0){alert("必须填写放映时长");return;}
+		            if($("#typ").val().length<=0){alert("必须选择电影类型");return;}
+		            if($("#degr").val().length<=0){alert("必须填写放映场次");return;}
+		            if($("#des").val().length<=0){alert("必须填写电影描述");return;}
+		            if($("#grad").val().length<=0){alert("必须填写电影评分");return;}
+		            if($("#pric").val().length<=0){alert("必须填写电影单价");return;}
+		            if($("#pic").val().length<=0){ alert("必须设置电影封面");return;}		            
+		            name = $("#name").textbox('getValue');
+		            
+		            $.ajax({
+						type : "post",
+						url : "${ctxPath}/movie/queryByName",
+						data : {"name":name},
+						success:function(msg) {
+							if (String(msg) == "true") {
+								
+							} else {
+								document.getElementById("checkName").value = String(msg);
+							}
+						},async:false
+					});
+		            
+		            if(document.getElementById("checkName").value == document.getElementById("name").value){alert("该电影已存在");return; }
+		            
+		            $.ajax({
+		                  type: 'POST',
+		                  url : "${ctxPath}/movie/saveAdd",
+		                  data : $("#addnews_form").serialize(),
+		                  success : function (res) { 
+		                        if(res=="true"){
+		                               parent.dlg_h(300,140,"添加成功！","你已添加电影:"+$("#name").val(),dlg_close,null,"info");
+		                        }else{
+		                               parent.dlg_h(300,140,"添加失败！","添加失败！",null,null,"error");
+		                        }                               
+		                        return false;
+		                  },
+		                  error : function(res) {parent.dlg_h(300,140,"系统提示","系统错误！",null,null,"error");}
+		            });
+		      });
+		      $('#back').click(function(){dlg_close();}); 
+		})
+		function dlg_close(){
+		      parent.swNewTab("电影管理","${ctxPath}/movie/goList");
+		}
+   </script>
+	<script>
+		function check(){
+			var obj = document.getElementsByName("allType");
+			var value = new Array();
+			var num=0;
+			var h = 0;
+			var f = 0;
+			for (i=0;i<obj.length ;i++ ){
+				if(obj[i].checked ){
+			    	num+=1;
+			    }
+			}
+			if(num==0){
+			    	alert("必须选择一种类型");
+			    	obj[0].checked = true;
+			    	$('#typ').textbox('setValue','爱情');
+			    	return false;
+			}
+			if(num >= 3){
+				for (k = 0; k < obj.length ; k++){
+					if(obj[k].checked ){	
+					}else{
+						obj[k].disabled = "disabled";
+					}
+				}
+			}else{
+				for (k = 0;k < obj.length ;k++ ){
+					obj[k].disabled = "";
+				}
+			}
+			
+			for(f; f < obj.length ; f++){
+				if(obj[f].checked){
+					value[h] = obj[f].value;
+					h++;
+				}	
+			}
+			
+			$('#typ').textbox('setValue',value);
+		}
+	</script>
+</html>

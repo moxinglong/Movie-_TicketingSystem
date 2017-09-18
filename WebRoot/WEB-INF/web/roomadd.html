@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>添加影厅</title>
+    <link rel="icon" href="${ctxPath}/include/images/ico.png" type="image/x-icon"/>	
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/icon.css">
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/easyui-lang-zh_CN.js"></script>
+  </head>
+  
+  <body>
+    <div class="easyui-panel" style="width:1130px;height: 530px;padding:60px 60px;">
+   <form id="addroom_form" method="post">
+      <div style="margin-bottom:50px">
+        <input id="name" name="name" class="easyui-textbox" data-options="prompt:'影厅名字',required:true" style="width:100%;height:32px">
+      </div>
+      <div style="margin-bottom:50px">
+        <input id="seatnum" name="seatnum" class="easyui-numberbox" data-options="prompt:'总座位数',min:0,precision:0,max:60,required:true" style="width:100%;height:32px">
+      </div>
+      <input id="checkName" name="checkName" type="hidden"/>
+      </form>
+      <div style="text-align:center;">
+        <button id="saveroom" class="easyui-linkbutton" iconCls="icon-ok" style="width:132;height:32px">保存</button>
+        <button id="back" class="easyui-linkbutton" iconCls="icon-back" style="width:132;height:32px">返回</button>
+      </div>
+   </div>
+  </body>
+  <script>		
+	$(function(){
+	      $('#saveroom').click(function(){//发布新闻前，要校验
+	      		if($("#name").val().length<=0){alert("必须填写影厅名字");return;}
+	      		if($("#seatnum").val().length<=0){alert("必须填写总座位数");return;}           
+	            name = $("#name").textbox('getValue');
+	            
+	            $.ajax({
+					type : "post",
+					url : "${ctxPath}/room/queryByName",
+					data : {"name":name},
+					success:function(msg) {
+						if (String(msg) == "true") {
+							
+						} else {
+							document.getElementById("checkName").value = String(msg);
+						}
+					},async:false
+				});
+	            
+	            if(document.getElementById("checkName").value == document.getElementById("name").value){alert("该影厅已存在");return; }
+	            
+	            $.ajax({
+	                  type: 'POST',
+	                  url : "${ctxPath}/room/saveAdd",
+	                  data : $("#addroom_form").serialize(),
+	                  success : function (res) { 
+	                        if(res=="true"){
+	                               parent.dlg_h(300,140,"添加成功！","你已添加"+$("#name").val()+"号影厅",dlg_close,null,"info");
+	                        }else{
+	                               parent.dlg_h(300,140,"添加失败！","添加失败！",null,null,"error");
+	                        }                               
+	                        return false;
+	                  },
+	                  error : function(res) {parent.dlg_h(300,140,"系统提示","系统错误！",null,null,"error");}
+	            });
+	      });
+	      $('#back').click(function(){dlg_close();}); 
+	})
+	function dlg_close(){
+	      parent.swNewTab("影厅管理","${ctxPath}/room/goList");
+	}
+   </script>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>对话框</title>
+    <link rel="icon" href="${ctxPath}/include/images/ico.png" type="image/x-icon"/>
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+  </head>
+  
+  <body>
+  <div id="dlg"  style="padding:10px;font-size:14pt;" ></div>
+  <script type="text/javascript">
+  /*
+  messager-icon:error,info,question,warning       
+  */
+  function dlg_h(w,h,t,content,fun_ok,fun_cancel,icon){
+        if(icon)$("#dlg").html("<div class=\"messager-icon messager-"+icon+"\"></div>"+content);
+        else $("#dlg").html(content);
+        if(w>800)w=800;
+        else w='auto';
+        if(h<400)h='auto';
+        $('#dlg').dialog({
+                width:w, height:h, title:t,
+                iconCls: 'icon-tip',resizable: false, modal: true, closed: true,
+                buttons: [{
+                        text:'确认',iconCls:'icon-ok',
+                        handler:function(){
+                               $('#dlg').dialog('close');
+                               if(fun_ok)fun_ok();
+                        }
+                  },{
+                        text:'取消',iconCls:'icon-cancel',
+                        handler:function(){
+                               $('#dlg').dialog('close');
+                               if(fun_cancel)fun_cancel();
+                        }
+                  }]
+            });
+        $("#dlg").dialog("open");
+        $('#dlg').dialog('center');
+  }
+  function dlg_ok(w,h,t,content,fun_ok,icon){
+        if(icon)$("#dlg").html("<div class=\"messager-icon messager-"+icon+"\"></div>"+content);
+        else $("#dlg").html(content);
+        if(w>800)w=800;
+        else w='auto';
+        if(h<400)h='auto';
+        $('#dlg').dialog({
+                width:w, height:h, title:t,
+                iconCls: 'icon-tip',resizable: false, modal: true, closed: true,
+                buttons: [{
+                        text:'确认',iconCls:'icon-ok',
+                        handler:function(){
+                               $('#dlg').dialog('close');
+                               if(fun_ok)fun_ok();
+                        }
+                  }]
+            });
+        $("#dlg").dialog("open");
+        $('#dlg').dialog('center');
+  }
+  </script>
+  </body>
+</html>

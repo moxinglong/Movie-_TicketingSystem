@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>用户管理</title>
+	<link rel="icon" href="${ctxPath}/include/images/ico.png" type="image/x-icon"/>
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/icon.css">
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/easyui-lang-zh_CN.js"></script>
+
+  </head>
+  <body>
+  		<table id="dg" cellpadding="2" ></table>
+		<div id="tb" style="padding:5px;">
+		      <input  id="s_name" class="easyui-textbox"  data-options="prompt:'email或昵称...'" style="width:200;height:32">
+		      <button id="s_user" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</button>
+		      <button id="a_user" class="easyui-linkbutton" data-options="iconCls:'icon-add'">添加</button>
+		</div>
+  </body>
+  <script type="text/javascript">
+		var s_name="",uid="";
+		function loadGrid(){
+		      s_name=$("#s_name").val();
+		      $("#dg").datagrid({
+		            width:1150,height:510,nowrap:false,
+		            striped:true,border:true,collapsible:false,
+		            url:"${ctxPath}/user/listUser",                    
+		        	queryParams:{"s_name":s_name},
+		            pagination:true,
+		            rownumbers:true,
+		            fitColumns:true,pageSize:20,
+		            loadMsg:'数据加载中...' ,
+		            columns:[[
+		                        {title:'邮箱', field:'email',width:100},
+		                        {title:'昵称', field:'xm',width:80},
+		                        {title:'性别', field:'sex',width:80},
+			                    {title:'操作', field:'role',width:100, formatter: function(value,row,index){
+			                          var p="<a href=\"javascript:editUser('"+row.email+"')\">修改</a>";
+			                          if(${me.uid}==row.uid)p+="";
+			                          else p+="    |   <a href=\"javascript:delUser('"+row.email+"')\">删除</a>";
+			                          return p;
+			                    }},
+		                ]],
+		              rowStyler:function(index, row){
+		                 if(${me.uid}==row.uid){ return 'background-color:#FFA042; font-weight:bold';}
+		              },
+		              toolbar:'#tb'
+		      });
+		}
+		function editUser(email){
+		      parent.swNewTab("修改用户信息","${ctxPath}/user/goEdit?email="+email);
+		}
+		function delUser(ph){
+		      email = ph;
+		      parent.dlg_h(300,140,"确认删除？","您确认要删除："+email+"吗？",dlg_ok,null,"question");
+		}
+		function dlg_ok(){
+		      $.ajax({
+		            url:"${ctxPath}/user/doDel1?email="+email,
+		            type:"post",
+		            success: function(res){
+		                  if(res=="true"){
+		                        parent.dlg_h(300,140,"删除成功","您已删除用户："+email,null,null,"info");
+		                        uid="";s_name="";
+		                        loadGrid();
+		                  }else {
+		                        parent.dlg_h(300,140,"删除失败",res,null,null,"error");
+		                  }
+		                  return false;
+		            },
+		            error:function(res){
+		                  parent.dlg_h(300,140,"系统提示","系统错误",null,null,"error");
+		            }
+		      })
+		}
+		$(function(){
+		      loadGrid();
+		      $("#s_user").click(function(){
+		            s_name=$("#s_name").val();
+		            loadGrid();
+		      });
+		      $("#a_user").click(function(){
+		            parent.swNewTab("添加用户信息","${ctxPath}/user/goAdd");
+		      });
+		      $("#tb").bind("keydown",function(e){           
+		            var theEvent = e || window.event; // 兼容FF和IE和Opera  
+		            var code = theEvent.keyCode || theEvent.which || theEvent.charCode;   
+		            if (code == 13) {//回车执行查询
+		                  $("#s_user").click();
+		              }   
+		      });
+		})
+</script>
+</html>

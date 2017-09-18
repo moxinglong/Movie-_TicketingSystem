@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>放映管理</title>
+	<link rel="icon" href="${ctxPath}/include/images/ico.png" type="image/x-icon"/>
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/icon.css">
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/xheditor/xheditor-1.2.2.min.js"></script>
+  </head>
+  
+  <body>
+    <table id="dg" cellpadding="2" ></table>
+	<div id="tb" style="padding:5px;">
+	      <input id="s_name" class="easyui-textbox"  data-options="prompt:'影厅名或电影名...'" style="width:200px;height:32px">
+	      <a id="s_play" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+	      <a id="a_play" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">添加</a>
+	</div>
+  </body>
+  <script type="text/javascript">
+  		var s_name="",id="";
+		function loadGrid(){
+		      s_name=$("#s_name").val();
+		      $("#dg").datagrid({
+		            width:1150,height:510,nowrap:false,
+		            striped:true,border:true,collapsible:false,
+		            url:"${ctxPath}/play/listPlay",                       
+		        	queryParams:{"s_name":s_name},
+		            pagination:true,
+		            rownumbers:true,
+		            singleSelect:true,
+		            fitColumns:true,pageSize:20,
+		            loadMsg:'数据加载中...' ,
+		            columns:[[
+		                    {title:'操作', field:'cz',width:50, formatter: function(value,row,index){
+		                          var p="<a href=\"javascript:delPlay('"+row.id+"')\">删除</a>";
+		                          return p;
+		                    }},
+		                     {title:'编号', field:'id',width:120},
+                             {title:'影厅名字', field:'rname',width:100},
+                             {title:'电影名字', field:'mname',width:150},
+                             {title:'放映时长(分钟)', field:'mtime',width:100},
+                             {title:'剩余座位数', field:'seatnum',width:60},
+                             {title:'开始时间', field:'starttime',width:150},
+                             {title:'终止时间', field:'endtime',width:150}
+		                ]],
+		              toolbar:'#tb'
+		      });
+		} 
+		function delPlay(ph){
+		    id = ph;
+		    parent.dlg_h(400,140,"确认删除？","您确认要删除这条记录吗？",dlg_ok,null,"question");
+		}
+		function dlg_ok(){
+		      $.ajax({
+		            url:"${ctxPath}/play/doDel1?id="+id,
+		            type:"post",
+		            success: function(res){
+		                  if(res=="true"){
+		                        parent.dlg_h(400,140,"删除成功","您已删除该条记录",null,null,"info");
+		                        id="";s_name="";
+		                        loadGrid();
+		                  }else {
+		                        parent.dlg_h(300,140,"删除失败",res,null,null,"error");
+		                  }
+		                  return false;
+		            },
+		            error:function(res){
+		                  parent.dlg_h(300,140,"系统提示","系统错误",null,null,"error");
+		            }
+		      })
+		}
+		$(function(){
+		      loadGrid();
+		      $("#s_play").click(function(){
+		            s_name=$("#s_name").val();
+		            loadGrid();
+		      });
+		      $("#a_play").click(function(){
+		            parent.swNewTab("添加放映信息","${ctxPath}/play/goAdd");
+		      });
+		      $("#tb").bind("keydown",function(e){           
+		            var theEvent = e || window.event; // 兼容FF和IE和Opera  
+		            var code = theEvent.keyCode || theEvent.which || theEvent.charCode;   
+		            if (code == 13) {//回车执行查询
+		            $("#s_play").click();
+		        }   
+		      });
+		})
+	</script>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>添加放映</title>
+	<link rel="icon" href="${ctxPath}/include/images/ico.png" type="image/x-icon"/>
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="${ctxPath}/include/css/themes/icon.css">
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/js/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="${ctxPath}/include/xheditor/xheditor-1.2.2.min.js"></script>
+  </head>
+  
+  <body>
+    <div style="margin:20px 0;"></div>
+
+      <div class="easyui-panel" style="width:1130px;height: 500px;padding:5px 10px">
+
+      <form id="addplay_form" class="easyui-form" method="post">
+
+            <table class="stripe" align="center" style="border-collapse:separate; border-spacing:20px;margin-top: 50px;">
+            	<!-- 选择影厅，电影 -->
+	            <tr>
+		            <td style="width:300px"><div>选择影厅:</div></td>
+		            <td style="width:300px"><div>选择电影:</div></td>	
+	            </tr>	          
+	            <tr>	
+	            	<td style="width:300px"><input name="rname" id="rname" ></td>
+	            	<td style="width:300px"><input name="mname" id="mname" ></td>		
+	            </tr>
+
+	            <!-- 放映时长 -->
+	            <tr>
+	            	<td><div>总座位数：</div></td>
+	            	<td><div>放映时长（分钟）：</div></td>
+	            </tr>
+	            
+	            <tr>
+	            	<td><input id="seatnum" name="seatnum" class="easyui-numberbox" readonly="readonly" data-options="required:true,precision:0,min:10"style="width:100px;height:32px"></td>
+            		<td><input id="mtime" name="mtime" class="easyui-numberbox" readonly="readonly" data-options="required:true,precision:0,min:10"style="width:100px;height:32px"></td>
+            	</tr>
+
+            <tr>
+
+            <td><div >开始时间：</div></td>
+
+            <td><div >终止时间：</div></td>
+
+            </tr>
+
+            <tr>
+
+            <td>
+
+                  <input class="easyui-datetimebox" name="starttime" id="starttime" value="" style="width:180px;height:32px;" data-options="required:true">
+
+            </td>      
+
+            <td>
+
+                  <input class="easyui-datetimebox" name="endtime" id="endtime" value="" readonly="readonly" style="width:180px;height:32px;" data-options="required:true">
+
+            </td>
+
+            </tr></table>
+            	<input id="checkTime" type="hidden">
+
+            </form>
+
+            <div style="text-align:center;margin-left: -80px;margin-top: 50px;">
+
+                  <a id="saveplay" href="#"class="easyui-linkbutton" iconCls="icon-ok" style="width:132px;height:32px">保存</a>
+
+                  <a id="back" href="#"class="easyui-linkbutton" iconCls="icon-back" style="width:132px;height:32px">返回</a>
+
+            </div>
+
+      </div>
+  </body>
+  	<script>					
+		$(function(){
+		      $('#rname').combotree({
+		      width:200,
+		      height:32,
+		      url: '${ctxPath}/play/getRoom',
+		      required: true,
+		      multiple:true,
+		      editable: false,
+		      //onlyLeafCheck:true,
+		      checkbox:true,
+		      lines:true
+			});
+			
+			 $('#mname').combotree({
+		      width:200,
+		      height:32,
+		      url: '${ctxPath}/play/getMovie',
+		      required: true,
+		      multiple:true,
+		      editable: false,
+		      //onlyLeafCheck:true,
+		      checkbox:true,
+		      lines:true
+			});
+			
+			$("#rname").combotree({  
+	         	 onChange:function(){  
+	             	var rname = $('#rname').textbox('getValue');
+					$.ajax({
+						type : "post",
+						url : "${ctxPath}/room/querySeatNum",
+						data : {"name":rname},
+						success:function(msg) {
+							if (String(msg) == "true") {
+								
+							} else {
+								$("#seatnum").numberbox("setValue", String(msg));
+							}
+						}
+					});
+	         	}
+	         }); 
+	         
+	       $("#mname").combotree({  
+	         	 onChange:function(){  
+	             	var mname = $('#mname').textbox('getValue');
+             		$.ajax({
+					type : "post",
+					url  : "${ctxPath}/movie/queryTime",
+					data : {"name":mname},
+					success:function(msg) {
+						if (String(msg) == "true") {
+							$("#mtime").numberbox("setValue", "");
+						} else {
+							$("#mtime").numberbox("setValue", String(msg));
+						}
+					}
+				});
+	         	}
+	         });
+	         
+	         $("#mtime").numberbox({  
+	         	 onChange:function(){  
+	             	var starttime = $('#starttime').datetimebox('getValue');
+             		if(starttime == ""){
+             			
+             		}else{
+             			var formatDateTime = function(date){
+		         	 		var y = date.getFullYear();
+		         	 		var m = date.getMonth() + 1;
+		         	 		m = m < 10 ? ('0' + m) : m;
+		         	 		var d = date.getDate();
+		         	 		d = d < 10 ? ('0' + d) : d;
+		         	 		var h = date.getHours();
+		         	 		var minute = date.getMinutes();
+		         	 		minute = minute < 10 ? ('0' + minute) : minute;
+		         	 		var second = date.getSeconds();
+		         	 		second = second < 10 ? ('0' + second) : second;
+		         	 		return y+'-'+m+'-'+d+' '+h+':'+minute+':'+second;
+			         	 	};  
+		             	var mtime     = $('#mtime').numberbox('getValue');
+		             	var time      = new Date(starttime.replace(/-/g,"/"));
+				        var t_s = time.getTime();
+				        var nt=new Date();
+				        nt.setTime(t_s+1000*60*mtime);
+				        var newTime = formatDateTime(new Date(nt));
+    					$("#endtime").datetimebox("setValue", newTime);
+             		}
+	         	}
+	         });   
+	         
+			$("#starttime").datetimebox({  
+		         	 onChange:function(){
+		         	 	var mtime = $('#mtime').numberbox('getValue');
+		         	 	if(mtime == ""){
+		         	 		alert("请选择电影(只选择一部)");		         	 		
+		         	 	}else{
+		         	 		var formatDateTime = function(date){
+		         	 		var y = date.getFullYear();
+		         	 		var m = date.getMonth() + 1;
+		         	 		m = m < 10 ? ('0' + m) : m;
+		         	 		var d = date.getDate();
+		         	 		d = d < 10 ? ('0' + d) : d;
+		         	 		var h = date.getHours();
+		         	 		var minute = date.getMinutes();
+		         	 		minute = minute < 10 ? ('0' + minute) : minute;
+		         	 		var second = date.getSeconds();
+		         	 		second = second < 10 ? ('0' + second) : second;
+		         	 		return y+'-'+m+'-'+d+' '+h+':'+minute+':'+second;
+			         	 	};  
+			         	 	var starttime = $('#starttime').datetimebox('getValue');
+			             	var mtime     = $('#mtime').numberbox('getValue');
+			             	var time      = new Date(starttime.replace(/-/g,"/"));
+					        var t_s = time.getTime();
+					        var nt=new Date();
+					        nt.setTime(t_s+1000*60*mtime);
+					        var newTime = formatDateTime(new Date(nt));
+	    					$("#endtime").datetimebox("setValue", newTime);
+		         	 	}
+		         	}
+		         }); 
+		
+		$("#intro").xheditor({
+		      width:500,
+		      internalScript:true,
+		      tools:'FontSize,FontColor,Source,About',
+		});
+		
+		      $('#saveplay').click(function(){///校验
+		            if(!$("#addplay_form").form("enableValidation").form("validate")) return;       
+		            var rname = $('#rname').textbox('getValue');
+		            var starttime = $('#starttime').datebox('getValue');
+		            var endtime = $('#endtime').datebox('getValue');
+		            
+		            $.ajax({
+						type : "post",
+						url : "${ctxPath}/play/queryTime",
+						data : {"rname":rname,"starttime":starttime,"endtime":endtime},
+						success:function(msg) {
+							if (String(msg) == "true") {
+								document.getElementById("checkTime").value = "";
+							} else {
+								document.getElementById("checkTime").value = String(msg);
+							}
+						},async:false
+					});
+		            
+		            
+		            if(document.getElementById("checkTime").value == "false"){
+		            	alert("该放映厅在此时间段已有安排,请对照放映表重新选择时间段");
+		            	return ;
+		            }
+		            
+		            $.ajax({
+		                  type: 'POST',
+		                  url : "${ctxPath}/play/saveAdd",
+		            	  data: $("#addplay_form").serialize(),
+		                  success : function (res) {
+		                        if(res=="true"){
+		                               parent.dlg_h(300,140,"添加成功！","你已添加放映场次",dlg_close,null,"info");
+		                        }else{
+		                               parent.dlg_h(300,140,"添加失败！","添加失败！",null,null,"error");
+		                        }                               
+		                        return false;
+		                  },
+		                  error : function(res) {
+		                        parent.dlg_ok(300,140,"系统提示","系统错误！",null,"error");}
+		            });
+		      });
+		      $('#back').click(function(){dlg_close();});
+		})
+		function dlg_close(){
+		  parent.swNewTab("放映管理","${ctxPath}/play/goList");
+		}
+    </script>
+</html>
